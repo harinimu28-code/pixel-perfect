@@ -56,7 +56,7 @@ export function StageSettings() {
           <div key={k}>
             <div className="mb-0.5 text-[10px] capitalize text-muted-foreground">{k}</div>
             <NumField
-              label={k[0].toUpperCase()}
+              label={k.charAt(0).toUpperCase()}
               value={dims[k]}
               step={k === "height" ? 0.1 : 0.5}
               onCommit={(n) => {
@@ -151,7 +151,7 @@ export function Inspector() {
                 <NumField
                   key={l}
                   label={l}
-                  value={obj.position[i]}
+                  value={obj.position[i] ?? 0}
                   onCommit={(n) => {
                     const p = [...obj.position] as Vec3;
                     p[i] = n;
@@ -168,7 +168,7 @@ export function Inspector() {
                   key={l}
                   label={l}
                   step={5}
-                  value={obj.rotation[i]}
+                  value={obj.rotation[i] ?? 0}
                   onCommit={(n) => {
                     const r = [...obj.rotation] as Vec3;
                     r[i] = n;

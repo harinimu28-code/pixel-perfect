@@ -26,7 +26,7 @@ function Mat({
       color={color}
       roughness={roughness}
       metalness={metalness}
-      map={map}
+      map={map ?? null}
       emissive={selected ? SEL : emissive ?? "#000000"}
       emissiveIntensity={selected ? 0.35 : emissiveIntensity}
     />

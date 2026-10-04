@@ -121,7 +121,7 @@ function CameraRig() {
       front: [0, 3, 15],
       side: [16, 3, 0],
     };
-    camera.position.set(...pos[view]);
+    camera.position.set(...(pos[view] ?? [9, 7, 12]));
     controls?.target.set(0, 1, 0);
     controls?.update();
   }, [nonce, view, camera, controls]);
