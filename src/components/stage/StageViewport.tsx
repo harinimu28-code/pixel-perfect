@@ -226,8 +226,8 @@ export function StageViewport() {
     >
       <color attach="background" args={["#0e0e11"]} />
       <fog attach="fog" args={["#0e0e11", 25, 60]} />
-      <ambientLight intensity={0.35} />
-      <hemisphereLight args={["#bcb8ff", "#1a1a1a", 0.35]} />
+      <ambientLight intensity={0.7} />
+      <hemisphereLight args={["#bcb8ff", "#2a2a2a", 0.8]} />
       <directionalLight
         position={[6, 12, 8]}
         intensity={1.4}
