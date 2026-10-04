@@ -14,7 +14,249 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      comments: {
+        Row: {
+          author: string
+          created_at: string
+          id: string
+          message: string
+          object_id: string | null
+          project_id: string
+          status: string
+        }
+        Insert: {
+          author?: string
+          created_at?: string
+          id: string
+          message: string
+          object_id?: string | null
+          project_id: string
+          status?: string
+        }
+        Update: {
+          author?: string
+          created_at?: string
+          id?: string
+          message?: string
+          object_id?: string | null
+          project_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "comments_object_id_fkey"
+            columns: ["object_id"]
+            isOneToOne: false
+            referencedRelation: "stage_objects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comments_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      projects: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          stage_depth: number
+          stage_height: number
+          stage_width: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id: string
+          name: string
+          stage_depth?: number
+          stage_height?: number
+          stage_width?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          stage_depth?: number
+          stage_height?: number
+          stage_width?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      requirements: {
+        Row: {
+          created_at: string
+          department: string
+          due_date: string | null
+          id: string
+          name: string
+          owner: string | null
+          priority: string
+          project_id: string
+          sort_order: number
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          department: string
+          due_date?: string | null
+          id: string
+          name: string
+          owner?: string | null
+          priority?: string
+          project_id: string
+          sort_order?: number
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          department?: string
+          due_date?: string | null
+          id?: string
+          name?: string
+          owner?: string | null
+          priority?: string
+          project_id?: string
+          sort_order?: number
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "requirements_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      stage_objects: {
+        Row: {
+          asset_name: string
+          asset_type: string
+          created_at: string
+          department: string
+          id: string
+          owner: string
+          position_x: number
+          position_y: number
+          position_z: number
+          project_id: string
+          rotation_x: number
+          rotation_y: number
+          rotation_z: number
+          scale_x: number
+          scale_y: number
+          scale_z: number
+          sort_order: number
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          asset_name: string
+          asset_type: string
+          created_at?: string
+          department: string
+          id: string
+          owner?: string
+          position_x?: number
+          position_y?: number
+          position_z?: number
+          project_id: string
+          rotation_x?: number
+          rotation_y?: number
+          rotation_z?: number
+          scale_x?: number
+          scale_y?: number
+          scale_z?: number
+          sort_order?: number
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          asset_name?: string
+          asset_type?: string
+          created_at?: string
+          department?: string
+          id?: string
+          owner?: string
+          position_x?: number
+          position_y?: number
+          position_z?: number
+          project_id?: string
+          rotation_x?: number
+          rotation_y?: number
+          rotation_z?: number
+          scale_x?: number
+          scale_y?: number
+          scale_z?: number
+          sort_order?: number
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stage_objects_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      timeline_events: {
+        Row: {
+          action: string
+          created_at: string
+          department: string
+          end_time: number
+          event_time: number
+          id: string
+          project_id: string
+          updated_at: string
+          value: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          department: string
+          end_time?: number
+          event_time?: number
+          id: string
+          project_id: string
+          updated_at?: string
+          value?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          department?: string
+          end_time?: number
+          event_time?: number
+          id?: string
+          project_id?: string
+          updated_at?: string
+          value?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "timeline_events_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
