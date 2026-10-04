@@ -14,12 +14,12 @@ function Mat({
   map,
 }: {
   color: string;
-  selected?: boolean;
-  roughness?: number;
-  metalness?: number;
-  emissive?: string;
-  emissiveIntensity?: number;
-  map?: THREE.Texture;
+  selected?: boolean | undefined;
+  roughness?: number | undefined;
+  metalness?: number | undefined;
+  emissive?: string | undefined;
+  emissiveIntensity?: number | undefined;
+  map?: THREE.Texture | undefined;
 }) {
   return (
     <meshStandardMaterial
@@ -64,7 +64,7 @@ function useScreenTexture(hue: number) {
   }, [hue]);
 }
 
-export function LedScreen({ selected, hue }: { selected?: boolean; hue: number }) {
+export function LedScreen({ selected, hue }: { selected?: boolean | undefined; hue: number }) {
   const tex = useScreenTexture(hue);
   return (
     <group>
@@ -86,7 +86,7 @@ export function LedScreen({ selected, hue }: { selected?: boolean; hue: number }
   );
 }
 
-function Podium({ selected }: { selected?: boolean }) {
+function Podium({ selected }: { selected?: boolean | undefined }) {
   return (
     <group>
       <mesh position={[0, 0.55, 0]} castShadow receiveShadow>
@@ -109,7 +109,7 @@ function Podium({ selected }: { selected?: boolean }) {
   );
 }
 
-function Speaker({ selected }: { selected?: boolean }) {
+function Speaker({ selected }: { selected?: boolean | undefined }) {
   return (
     <group>
       <mesh position={[0, 0.4, 0]} castShadow>
@@ -136,7 +136,7 @@ function Speaker({ selected }: { selected?: boolean }) {
   );
 }
 
-export function StageLight({ selected, beam }: { selected?: boolean; beam: string }) {
+export function StageLight({ selected, beam }: { selected?: boolean | undefined; beam: string }) {
   return (
     <group>
       <mesh position={[0, 0.08, 0]} castShadow>
@@ -168,7 +168,7 @@ export function StageLight({ selected, beam }: { selected?: boolean; beam: strin
   );
 }
 
-function Chair({ selected }: { selected?: boolean }) {
+function Chair({ selected }: { selected?: boolean | undefined }) {
   const legs: [number, number][] = [
     [-0.2, -0.2],
     [0.2, -0.2],
@@ -195,7 +195,7 @@ function Chair({ selected }: { selected?: boolean }) {
   );
 }
 
-function Prop({ selected }: { selected?: boolean }) {
+function Prop({ selected }: { selected?: boolean | undefined }) {
   return (
     <group>
       <mesh position={[0, 0.06, 0]} castShadow>
@@ -218,7 +218,7 @@ function Prop({ selected }: { selected?: boolean }) {
   );
 }
 
-function Riser({ selected }: { selected?: boolean }) {
+function Riser({ selected }: { selected?: boolean | undefined }) {
   return (
     <mesh position={[0, 0.2, 0]} castShadow receiveShadow>
       <boxGeometry args={[2, 0.4, 1.5]} />
@@ -234,7 +234,7 @@ export function AssetMesh({
   hue,
 }: {
   type: AssetType;
-  selected?: boolean;
+  selected?: boolean | undefined;
   beam: string;
   hue: number;
 }) {
