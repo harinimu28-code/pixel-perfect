@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Play, Pause, SkipBack } from "lucide-react";
-import { useStage, TRACKS, TIMELINE_EVENTS, TIMELINE_LENGTH, MARKERS, type Department } from "@/lib/stage-store";
+import { useStage, TRACKS, TIMELINE_LENGTH, MARKERS, type Department } from "@/lib/stage-store";
 
 const TRACK_CLS: Record<Department, string> = {
   Stage: "bg-track-stage",

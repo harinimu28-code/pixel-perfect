@@ -9,7 +9,7 @@ import {
 } from "@react-three/drei";
 import { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
-import { useStage, TIMELINE_EVENTS, type StageObject, type Vec3 } from "@/lib/stage-store";
+import { useStage, type StageObject, type Vec3 } from "@/lib/stage-store";
 import { AssetMesh } from "./assets";
 
 const D2R = Math.PI / 180;

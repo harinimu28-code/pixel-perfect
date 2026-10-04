@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { loadProjectFromDb, saveProjectToDb } from "./stage-db";
 
 export type AssetType = "stage" | "led" | "podium" | "speaker" | "light" | "chair" | "prop";
 export type Department = "Stage" | "Lighting" | "Sound" | "LED Screen" | "Props";
@@ -33,6 +34,26 @@ export interface StageDims {
 
 export type TransformMode = "translate" | "rotate" | "scale";
 export type CameraView = "perspective" | "top" | "front" | "side";
+
+export interface Requirement {
+  id: string;
+  dept: Department;
+  text: string;
+  done: boolean;
+  owner?: string | null | undefined;
+  priority?: string | undefined;
+  dueDate?: string | null | undefined;
+}
+
+export const DEFAULT_REQUIREMENTS: Requirement[] = [
+  { id: "r1", dept: "Stage", text: "12×8 m deck at 0.6 m height, black marley finish", done: true },
+  { id: "r2", dept: "Stage", text: "Wheelchair ramp stage-left, 1:12 gradient", done: false },
+  { id: "r3", dept: "Lighting", text: "2× moving heads on downstage edge, DMX universe 1", done: true },
+  { id: "r4", dept: "Lighting", text: "Front truss warm wash, 6× LED pars", done: false },
+  { id: "r5", dept: "Sound", text: "L/R mains + 2 wireless lapel, 1 podium mic", done: false },
+  { id: "r6", dept: "LED Screen", text: "6×3.4 m LED wall, P3.9, 16:9 input via HDMI", done: true },
+  { id: "r7", dept: "Props", text: "2× decorative pillars with floral urns", done: false },
+];
 
 interface Snapshot {
   objects: StageObject[];
@@ -102,6 +123,14 @@ interface StageState {
   past: Snapshot[];
   future: Snapshot[];
   playhead: number; // minutes
+  timelineEvents: TimelineEvent[];
+  requirements: Requirement[];
+  saving: boolean;
+  saveError: string | null;
+  loaded: boolean;
+  toggleRequirement: (id: string) => void;
+  addRequirement: (r: { dept: Department; text: string }) => void;
+  removeRequirement: (id: string) => void;
   select: (id: string | null) => void;
   setTransformMode: (m: TransformMode) => void;
   setCameraView: (v: CameraView) => void;
@@ -113,8 +142,8 @@ interface StageState {
   setDims: (d: Partial<StageDims>) => void;
   undo: () => void;
   redo: () => void;
-  save: () => void;
-  load: () => void;
+  save: () => Promise<void>;
+  load: () => Promise<void>;
   setPlayhead: (t: number) => void;
 }
 
@@ -143,6 +172,17 @@ export const useStage = create<StageState>((set, get) => {
     past: [],
     future: [],
     playhead: 12,
+    timelineEvents: TIMELINE_EVENTS,
+    requirements: DEFAULT_REQUIREMENTS,
+    saving: false,
+    saveError: null,
+    loaded: false,
+    toggleRequirement: (id) =>
+      set((s) => ({ saved: false, requirements: s.requirements.map((r) => (r.id === id ? { ...r, done: !r.done } : r)) })),
+    addRequirement: (r) =>
+      set((s) => ({ saved: false, requirements: [...s.requirements, { ...r, id: uid(), done: false }] })),
+    removeRequirement: (id) =>
+      set((s) => ({ saved: false, requirements: s.requirements.filter((r) => r.id !== id) })),
     select: (id) => set({ selectedId: id }),
     setTransformMode: (m) => set({ transformMode: m }),
     setCameraView: (v) => set((s) => ({ cameraView: v, cameraNonce: s.cameraNonce + 1 })),
@@ -204,21 +244,41 @@ export const useStage = create<StageState>((set, get) => {
       if (!next) return;
       set({ ...next, future: future.slice(1), past: [...past, { objects, dims }], saved: false });
     },
-    save: () => {
-      const { objects, dims } = get();
-      const at = new Date().toISOString();
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({ objects, dims, at }));
-      set({ saved: true, lastSavedAt: at });
-    },
-    load: () => {
+    save: async () => {
+      const { objects, dims, projectName, timelineEvents, requirements } = get();
+      set({ saving: true, saveError: null });
       try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (!raw) return;
-        const data = JSON.parse(raw);
-        set({ objects: data.objects, dims: data.dims, lastSavedAt: data.at, saved: true });
-      } catch {
-        /* ignore corrupted save */
+        const at = await saveProjectToDb({ name: projectName, dims, objects, timeline: timelineEvents, requirements });
+        set({ saved: true, lastSavedAt: at, saving: false });
+      } catch (e) {
+        // fallback: keep a local copy so work isn't lost
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({ objects, dims, at: new Date().toISOString() }));
+        set({ saving: false, saveError: e instanceof Error ? e.message : "Save failed" });
       }
+    },
+    load: async () => {
+      try {
+        const data = await loadProjectFromDb();
+        if (data) {
+          set({
+            projectName: data.name, objects: data.objects, dims: data.dims,
+            timelineEvents: data.timeline.length ? data.timeline : TIMELINE_EVENTS,
+            requirements: data.requirements, lastSavedAt: data.updatedAt, saved: true,
+            past: [], future: [], selectedId: null,
+          });
+        }
+      } catch {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (raw) {
+            const data = JSON.parse(raw);
+            set({ objects: data.objects, dims: data.dims, lastSavedAt: data.at, saved: true });
+          }
+        } catch {
+          /* ignore corrupted save */
+        }
+      }
+      set({ loaded: true });
     },
     setPlayhead: (t) => set({ playhead: Math.max(0, Math.min(TIMELINE_LENGTH, t)) }),
   };
