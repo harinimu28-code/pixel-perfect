@@ -18,10 +18,10 @@ let lastGizmoUp = 0;
 
 function useShowState() {
   const t = useStage((s) => s.playhead);
-  const TIMELINE_EVENTS = useStage((s) => s.timelineEvents);
+  const events = useStage((s) => s.timelineEvents);
   return useMemo(() => {
-    const light = TIMELINE_EVENTS.find((e) => e.track === "Lighting" && t >= e.start && t < e.end);
-    const led = TIMELINE_EVENTS.find((e) => e.track === "LED Screen" && t >= e.start && t < e.end);
+    const light = events.find((e) => e.track === "Lighting" && t >= e.start && t < e.end);
+    const led = events.find((e) => e.track === "LED Screen" && t >= e.start && t < e.end);
     const beamMap: Record<string, string> = {
       "Warm Wash": "#ffb36b",
       "Chase FX": "#9b7bff",
@@ -38,7 +38,7 @@ function useShowState() {
       beam: light ? beamMap[light.label] ?? "#ffffff" : "#3a3a44",
       hue: led ? hueMap[led.label] ?? 260 : 230,
     };
-  }, [t, TIMELINE_EVENTS]);
+  }, [t, events]);
 }
 
 function StageItem({ obj, beam, hue }: { obj: StageObject; beam: string; hue: number }) {
