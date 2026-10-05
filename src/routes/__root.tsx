@@ -121,7 +121,7 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   useEffect(() => {
-    useStage.getState().load();
+    void useStage.getState().load();
   }, []);
 
   return (
