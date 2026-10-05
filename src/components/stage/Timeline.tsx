@@ -60,10 +60,10 @@ export function Timeline({ tall = false }: { tall?: boolean }) {
     window.addEventListener("pointerup", up);
   };
 
-  const TIMELINE_EVENTS = useStage((s) => s.timelineEvents);
+  const events = useStage((s) => s.timelineEvents);
   const pct = (t: number) => `${(t / TIMELINE_LENGTH) * 100}%`;
-  const active = TIMELINE_EVENTS.filter((e) => playhead >= e.start && playhead < e.end);
-  const sel = TIMELINE_EVENTS.find((e) => e.id === selectedEvt);
+  const active = events.filter((e) => playhead >= e.start && playhead < e.end);
+  const sel = events.find((e) => e.id === selectedEvt);
   const rowH = tall ? "h-10" : "h-6";
 
   return (
@@ -121,7 +121,7 @@ export function Timeline({ tall = false }: { tall?: boolean }) {
           </div>
           {TRACKS.map((t) => (
             <div key={t} className={`${rowH} relative border-b border-border/60`}>
-              {TIMELINE_EVENTS.filter((e) => e.track === t).map((e) => (
+              {events.filter((e) => e.track === t).map((e) => (
                 <button
                   key={e.id}
                   onClick={() => {
