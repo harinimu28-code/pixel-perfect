@@ -1,8 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { create } from "zustand";
 import { PageHeader } from "@/components/shell/Sidebar";
-import type { Department } from "@/lib/stage-store";
+import { useStage, type Department } from "@/lib/stage-store";
 
 export const Route = createFileRoute("/requirements")({
   head: () => ({
@@ -16,26 +15,15 @@ export const Route = createFileRoute("/requirements")({
   component: Requirements,
 });
 
-interface Req { id: string; dept: Department; text: string; done: boolean }
 const DEPTS: Department[] = ["Stage", "Lighting", "Sound", "LED Screen", "Props"];
 
-const useReqs = create<{ items: Req[]; toggle: (id: string) => void; add: (r: Omit<Req, "id" | "done">) => void; remove: (id: string) => void }>((set) => ({
-  items: [
-    { id: "r1", dept: "Stage", text: "12×8 m deck at 0.6 m height, black marley finish", done: true },
-    { id: "r2", dept: "Stage", text: "Wheelchair ramp stage-left, 1:12 gradient", done: false },
-    { id: "r3", dept: "Lighting", text: "2× moving heads on downstage edge, DMX universe 1", done: true },
-    { id: "r4", dept: "Lighting", text: "Front truss warm wash, 6× LED pars", done: false },
-    { id: "r5", dept: "Sound", text: "L/R mains + 2 wireless lapel, 1 podium mic", done: false },
-    { id: "r6", dept: "LED Screen", text: "6×3.4 m LED wall, P3.9, 16:9 input via HDMI", done: true },
-    { id: "r7", dept: "Props", text: "2× decorative pillars with floral urns", done: false },
-  ],
-  toggle: (id) => set((s) => ({ items: s.items.map((i) => (i.id === id ? { ...i, done: !i.done } : i)) })),
-  add: (r) => set((s) => ({ items: [...s.items, { ...r, id: Math.random().toString(36).slice(2), done: false }] })),
-  remove: (id) => set((s) => ({ items: s.items.filter((i) => i.id !== id) })),
-}));
-
 function Requirements() {
-  const { items, toggle, add, remove } = useReqs();
+  const items = useStage((s) => s.requirements);
+  const toggle = useStage((s) => s.toggleRequirement);
+  const add = useStage((s) => s.addRequirement);
+  const remove = useStage((s) => s.removeRequirement);
+  const save = useStage((s) => s.save);
+  const saved = useStage((s) => s.saved);
   const [dept, setDept] = useState<Department>("Stage");
   const [text, setText] = useState("");
   return (
@@ -56,6 +44,7 @@ function Requirements() {
           </select>
           <input className="field flex-1 font-sans" placeholder="New requirement…" value={text} onChange={(e) => setText(e.target.value)} />
           <button className="btn-primary">Add</button>
+          <button type="button" className="btn" disabled={saved} onClick={() => void save()}>{saved ? "Saved" : "Save"}</button>
         </form>
         {DEPTS.map((d) => (
           <section key={d} className="border border-border">

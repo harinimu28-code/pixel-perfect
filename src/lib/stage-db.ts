@@ -14,7 +14,7 @@ export interface ProjectData {
 
 const chk = <T,>(r: { data: T; error: { message: string } | null }) => {
   if (r.error) throw new Error(r.error.message);
-  return r.data;
+  return r.data as NonNullable<T>;
 };
 
 export async function saveProjectToDb(d: Omit<ProjectData, "updatedAt">): Promise<string> {

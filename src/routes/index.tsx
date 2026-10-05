@@ -34,7 +34,7 @@ function PlannerPage() {
         s.redo();
       } else if (mod && e.key.toLowerCase() === "s") {
         e.preventDefault();
-        s.save();
+        void s.save();
       } else if (e.key === "w") s.setTransformMode("translate");
       else if (e.key === "e") s.setTransformMode("rotate");
       else if (e.key === "r") s.setTransformMode("scale");

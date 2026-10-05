@@ -56,8 +56,8 @@ export function TopBar() {
         >
           <Send className="h-3 w-3" /> Review{drafts.length ? ` (${drafts.length})` : ""}
         </button>
-        <button className="btn-primary" onClick={s.save} title="Save (Ctrl+S)">
-          <Save className="h-3 w-3" /> Save
+        <button className="btn-primary" onClick={() => void s.save()} disabled={s.saving} title={s.saveError ? `Save failed: ${s.saveError}` : "Save (Ctrl+S)"}>
+          <Save className="h-3 w-3" /> {s.saving ? "Saving…" : s.saveError ? "Retry save" : "Save"}
         </button>
       </div>
     </header>

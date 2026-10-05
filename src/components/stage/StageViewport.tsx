@@ -18,6 +18,7 @@ let lastGizmoUp = 0;
 
 function useShowState() {
   const t = useStage((s) => s.playhead);
+  const TIMELINE_EVENTS = useStage((s) => s.timelineEvents);
   return useMemo(() => {
     const light = TIMELINE_EVENTS.find((e) => e.track === "Lighting" && t >= e.start && t < e.end);
     const led = TIMELINE_EVENTS.find((e) => e.track === "LED Screen" && t >= e.start && t < e.end);
@@ -37,7 +38,7 @@ function useShowState() {
       beam: light ? beamMap[light.label] ?? "#ffffff" : "#3a3a44",
       hue: led ? hueMap[led.label] ?? 260 : 230,
     };
-  }, [t]);
+  }, [t, TIMELINE_EVENTS]);
 }
 
 function StageItem({ obj, beam, hue }: { obj: StageObject; beam: string; hue: number }) {

@@ -60,6 +60,7 @@ export function Timeline({ tall = false }: { tall?: boolean }) {
     window.addEventListener("pointerup", up);
   };
 
+  const TIMELINE_EVENTS = useStage((s) => s.timelineEvents);
   const pct = (t: number) => `${(t / TIMELINE_LENGTH) * 100}%`;
   const active = TIMELINE_EVENTS.filter((e) => playhead >= e.start && playhead < e.end);
   const sel = TIMELINE_EVENTS.find((e) => e.id === selectedEvt);
