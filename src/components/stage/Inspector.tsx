@@ -3,7 +3,7 @@ import { Pencil, MessageSquare, Trash2, Check } from "lucide-react";
 import { useStage, type Department, type Status, type Vec3 } from "@/lib/stage-store";
 import { useNotifications, timeAgo } from "@/lib/notifications";
 
-const DEPTS: Department[] = ["Stage", "Lighting", "Sound", "LED Screen", "Props"];
+const DEPTS: Department[] = ["Stage", "Lighting", "Sound", "LED Screen", "Props", "Design"];
 const STATUSES: Status[] = ["Draft", "In Review", "Approved", "Changes Requested"];
 
 export const STATUS_CLS: Record<Status, string> = {

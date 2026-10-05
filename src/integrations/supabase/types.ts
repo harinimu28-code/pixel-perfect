@@ -14,6 +14,51 @@ export type Database = {
   }
   public: {
     Tables: {
+      asset_library: {
+        Row: {
+          category: string
+          created_at: string
+          department: string
+          file_type: string
+          file_url: string
+          id: string
+          name: string
+          original_filename: string
+          size_bytes: number
+          storage_path: string
+          thumbnail_url: string | null
+          updated_at: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          department?: string
+          file_type: string
+          file_url: string
+          id?: string
+          name: string
+          original_filename: string
+          size_bytes?: number
+          storage_path: string
+          thumbnail_url?: string | null
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          department?: string
+          file_type?: string
+          file_url?: string
+          id?: string
+          name?: string
+          original_filename?: string
+          size_bytes?: number
+          storage_path?: string
+          thumbnail_url?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       comments: {
         Row: {
           author: string
@@ -141,6 +186,7 @@ export type Database = {
       }
       stage_objects: {
         Row: {
+          asset_id: string | null
           asset_name: string
           asset_type: string
           created_at: string
@@ -162,6 +208,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          asset_id?: string | null
           asset_name: string
           asset_type: string
           created_at?: string
@@ -183,6 +230,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          asset_id?: string | null
           asset_name?: string
           asset_type?: string
           created_at?: string
@@ -204,6 +252,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "stage_objects_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "asset_library"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "stage_objects_project_id_fkey"
             columns: ["project_id"]

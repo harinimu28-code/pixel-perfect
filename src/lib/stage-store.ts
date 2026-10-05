@@ -1,8 +1,12 @@
 import { create } from "zustand";
 import { loadProjectFromDb, saveProjectToDb } from "./stage-db";
 
-export type AssetType = "stage" | "led" | "podium" | "speaker" | "light" | "chair" | "prop";
-export type Department = "Stage" | "Lighting" | "Sound" | "LED Screen" | "Props";
+export type AssetType =
+  | "stage" | "led" | "podium" | "speaker" | "light" | "chair" | "prop"
+  | "steps" | "backdrop" | "truss" | "table" | "sofa" | "stool" | "spot" | "ledbar" | "floorlight"
+  | "sub" | "mic" | "stand" | "sideled" | "panel" | "plant" | "vase" | "guitar" | "drum"
+  | "custom";
+export type Department = "Stage" | "Lighting" | "Sound" | "LED Screen" | "Props" | "Design";
 export type Status = "Draft" | "In Review" | "Approved" | "Changes Requested";
 export type Vec3 = [number, number, number];
 
@@ -24,6 +28,8 @@ export interface StageObject {
   status: Status;
   owner: string;
   comments: StageComment[];
+  /** Asset library item this instance was placed from (imported models only). */
+  assetId?: string | null | undefined;
 }
 
 export interface StageDims {
@@ -68,6 +74,25 @@ export const ASSET_DEFAULTS: Record<AssetType, { label: string; department: Depa
   light: { label: "Moving Head Light", department: "Lighting", owner: "Lighting Team", y: 0 },
   chair: { label: "Chair", department: "Stage", owner: "Stage Team", y: 0 },
   prop: { label: "Prop", department: "Props", owner: "Props Team", y: 0 },
+  steps: { label: "Stage Steps", department: "Stage", owner: "Stage Team", y: 0 },
+  backdrop: { label: "Backdrop", department: "Stage", owner: "Stage Team", y: 0 },
+  truss: { label: "Truss", department: "Stage", owner: "Stage Team", y: 0 },
+  table: { label: "Table", department: "Props", owner: "Props Team", y: 0 },
+  sofa: { label: "Sofa", department: "Props", owner: "Props Team", y: 0 },
+  stool: { label: "High Stool", department: "Props", owner: "Props Team", y: 0 },
+  spot: { label: "Spot Light", department: "Lighting", owner: "Lighting Team", y: 0 },
+  ledbar: { label: "LED Bar", department: "Lighting", owner: "Lighting Team", y: 0 },
+  floorlight: { label: "Floor Light", department: "Lighting", owner: "Lighting Team", y: 0 },
+  sub: { label: "Subwoofer", department: "Sound", owner: "Audio Team", y: 0 },
+  mic: { label: "Microphone", department: "Sound", owner: "Audio Team", y: 0 },
+  stand: { label: "Speaker Stand", department: "Sound", owner: "Audio Team", y: 0 },
+  sideled: { label: "Side LED Screen", department: "LED Screen", owner: "Video Team", y: 0 },
+  panel: { label: "Display Panel", department: "LED Screen", owner: "Video Team", y: 0 },
+  plant: { label: "Plant", department: "Props", owner: "Props Team", y: 0 },
+  vase: { label: "Decorative Vase", department: "Props", owner: "Props Team", y: 0 },
+  guitar: { label: "Guitar", department: "Props", owner: "Props Team", y: 0 },
+  drum: { label: "Drum", department: "Props", owner: "Props Team", y: 0 },
+  custom: { label: "Imported Asset", department: "Design", owner: "Design Team", y: 0 },
 };
 
 const uid = () => Math.random().toString(36).slice(2, 10);
@@ -135,7 +160,8 @@ interface StageState {
   setTransformMode: (m: TransformMode) => void;
   setCameraView: (v: CameraView) => void;
   toggleGrid: () => void;
-  addObject: (type: AssetType) => void;
+  addObject: (type: AssetType, label?: string) => void;
+  addCustomObject: (asset: { id: string; name: string; department: Department }) => void;
   updateObject: (id: string, patch: Partial<StageObject>) => void;
   deleteObject: (id: string) => void;
   addComment: (id: string, text: string) => void;
@@ -225,14 +251,25 @@ export const useStage = create<StageState>((set, get) => {
     setTransformMode: (m) => set({ transformMode: m }),
     setCameraView: (v) => set((s) => ({ cameraView: v, cameraNonce: s.cameraNonce + 1 })),
     toggleGrid: () => set((s) => ({ showGrid: !s.showGrid })),
-    addObject: (type) => {
+    addObject: (type, label) => {
       const d = ASSET_DEFAULTS[type];
-      const count = get().objects.filter((x) => x.type === type).length + 1;
-      const obj = o(`${d.label} ${String(count).padStart(2, "0")}`, type, [
+      const base = label ?? d.label;
+      const count = get().objects.filter((x) => x.name.startsWith(base)).length + 1;
+      const obj = o(`${base} ${String(count).padStart(2, "0")}`, type, [
         (Math.random() - 0.5) * 4,
         get().dims.height,
         (Math.random() - 0.5) * 2,
       ], "Draft");
+      commit({ objects: [...get().objects, obj] });
+      set({ selectedId: obj.id });
+    },
+    addCustomObject: (asset) => {
+      const count = get().objects.filter((x) => x.assetId === asset.id).length + 1;
+      const obj = o(`${asset.name} ${String(count).padStart(2, "0")}`, "custom", [
+        (Math.random() - 0.5) * 4,
+        get().dims.height,
+        (Math.random() - 0.5) * 2,
+      ], "Draft", { assetId: asset.id, department: asset.department, owner: "Design Team" });
       commit({ objects: [...get().objects, obj] });
       set({ selectedId: obj.id });
     },
