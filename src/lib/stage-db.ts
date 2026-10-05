@@ -33,7 +33,7 @@ export async function saveProjectToDb(d: Omit<ProjectData, "updatedAt">): Promis
       position_x: o.position[0], position_y: o.position[1], position_z: o.position[2],
       rotation_x: o.rotation[0], rotation_y: o.rotation[1], rotation_z: o.rotation[2],
       scale_x: o.scale, scale_y: o.scale, scale_z: o.scale,
-      status: o.status, owner: o.owner, sort_order: i, updated_at: at,
+      status: o.status, owner: o.owner, sort_order: i, updated_at: at, asset_id: o.assetId ?? null,
     }))));
   const comments = d.objects.flatMap((o) => o.comments.map((c) => ({
     id: c.id, project_id: PROJECT_ID, object_id: o.id, author: c.author, message: c.text, status: "Open", created_at: c.at,
@@ -71,7 +71,7 @@ export async function loadProjectFromDb(): Promise<ProjectData | null> {
       id: o.id, name: o.asset_name, type: o.asset_type as AssetType, department: o.department as Department,
       position: [o.position_x, o.position_y, o.position_z],
       rotation: [o.rotation_x, o.rotation_y, o.rotation_z],
-      scale: o.scale_x, status: o.status as Status, owner: o.owner,
+      scale: o.scale_x, status: o.status as Status, owner: o.owner, assetId: o.asset_id,
       comments: comments.filter((c) => c.object_id === o.id).map((c) => ({ id: c.id, text: c.message, author: c.author, at: c.created_at })),
     })),
     timeline: chk(evts).map((e) => ({ id: e.id, track: e.department as Department, label: e.action, start: e.event_time, end: e.end_time })),
