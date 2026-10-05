@@ -147,6 +147,44 @@ interface StageState {
   setPlayhead: (t: number) => void;
 }
 
+/* ---------- Timeline demo data ---------- */
+export const TIMELINE_LENGTH = 120; // minutes
+export interface TimelineEvent {
+  id: string;
+  track: Department;
+  label: string;
+  start: number;
+  end: number;
+}
+export const TRACKS: Department[] = ["Stage", "Lighting", "Sound", "LED Screen", "Props"];
+export const TIMELINE_EVENTS: TimelineEvent[] = [
+  { id: "e1", track: "Stage", label: "Doors / Preset", start: 0, end: 10 },
+  { id: "e2", track: "Stage", label: "Welcome Address", start: 10, end: 25 },
+  { id: "e3", track: "Stage", label: "Classical Dance", start: 25, end: 55 },
+  { id: "e4", track: "Stage", label: "Awards", start: 60, end: 90 },
+  { id: "e5", track: "Stage", label: "Finale", start: 95, end: 120 },
+  { id: "e6", track: "Lighting", label: "Warm Wash", start: 0, end: 25 },
+  { id: "e7", track: "Lighting", label: "Chase FX", start: 25, end: 55 },
+  { id: "e8", track: "Lighting", label: "Spot Podium", start: 60, end: 90 },
+  { id: "e9", track: "Lighting", label: "Strobe Finale", start: 95, end: 120 },
+  { id: "e10", track: "Sound", label: "Walk-in Playlist", start: 0, end: 10 },
+  { id: "e11", track: "Sound", label: "Lapel Mic", start: 10, end: 25 },
+  { id: "e12", track: "Sound", label: "Playback Track", start: 25, end: 55 },
+  { id: "e13", track: "Sound", label: "Podium Mic", start: 60, end: 90 },
+  { id: "e14", track: "LED Screen", label: "Event Loop", start: 0, end: 25 },
+  { id: "e15", track: "LED Screen", label: "Dance Visuals", start: 25, end: 55 },
+  { id: "e16", track: "LED Screen", label: "Award Slides", start: 60, end: 90 },
+  { id: "e17", track: "LED Screen", label: "Sponsor Reel", start: 90, end: 95 },
+  { id: "e18", track: "Props", label: "Set Backdrop A", start: 20, end: 25 },
+  { id: "e19", track: "Props", label: "Trophy Table", start: 58, end: 60 },
+  { id: "e20", track: "Props", label: "Confetti Cue", start: 115, end: 117 },
+];
+export const MARKERS = [
+  { t: 10, label: "Show Start" },
+  { t: 57, label: "Intermission" },
+  { t: 115, label: "Confetti" },
+];
+
 export const useStage = create<StageState>((set, get) => {
   const commit = (next: Partial<Snapshot>) => {
     const { objects, dims, past } = get();
@@ -284,40 +322,3 @@ export const useStage = create<StageState>((set, get) => {
   };
 });
 
-/* ---------- Timeline demo data ---------- */
-export const TIMELINE_LENGTH = 120; // minutes
-export interface TimelineEvent {
-  id: string;
-  track: Department;
-  label: string;
-  start: number;
-  end: number;
-}
-export const TRACKS: Department[] = ["Stage", "Lighting", "Sound", "LED Screen", "Props"];
-export const TIMELINE_EVENTS: TimelineEvent[] = [
-  { id: "e1", track: "Stage", label: "Doors / Preset", start: 0, end: 10 },
-  { id: "e2", track: "Stage", label: "Welcome Address", start: 10, end: 25 },
-  { id: "e3", track: "Stage", label: "Classical Dance", start: 25, end: 55 },
-  { id: "e4", track: "Stage", label: "Awards", start: 60, end: 90 },
-  { id: "e5", track: "Stage", label: "Finale", start: 95, end: 120 },
-  { id: "e6", track: "Lighting", label: "Warm Wash", start: 0, end: 25 },
-  { id: "e7", track: "Lighting", label: "Chase FX", start: 25, end: 55 },
-  { id: "e8", track: "Lighting", label: "Spot Podium", start: 60, end: 90 },
-  { id: "e9", track: "Lighting", label: "Strobe Finale", start: 95, end: 120 },
-  { id: "e10", track: "Sound", label: "Walk-in Playlist", start: 0, end: 10 },
-  { id: "e11", track: "Sound", label: "Lapel Mic", start: 10, end: 25 },
-  { id: "e12", track: "Sound", label: "Playback Track", start: 25, end: 55 },
-  { id: "e13", track: "Sound", label: "Podium Mic", start: 60, end: 90 },
-  { id: "e14", track: "LED Screen", label: "Event Loop", start: 0, end: 25 },
-  { id: "e15", track: "LED Screen", label: "Dance Visuals", start: 25, end: 55 },
-  { id: "e16", track: "LED Screen", label: "Award Slides", start: 60, end: 90 },
-  { id: "e17", track: "LED Screen", label: "Sponsor Reel", start: 90, end: 95 },
-  { id: "e18", track: "Props", label: "Set Backdrop A", start: 20, end: 25 },
-  { id: "e19", track: "Props", label: "Trophy Table", start: 58, end: 60 },
-  { id: "e20", track: "Props", label: "Confetti Cue", start: 115, end: 117 },
-];
-export const MARKERS = [
-  { t: 10, label: "Show Start" },
-  { t: 57, label: "Intermission" },
-  { t: 115, label: "Confetti" },
-];
