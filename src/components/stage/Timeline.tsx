@@ -8,6 +8,7 @@ const TRACK_CLS: Record<Department, string> = {
   Sound: "bg-track-sound",
   "LED Screen": "bg-track-led",
   Props: "bg-track-props",
+  Design: "bg-track-props",
 };
 
 const fmt = (m: number) => {

@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import * as THREE from "three";
 import type { AssetType } from "@/lib/stage-store";
+import { ExtraMesh } from "./assets-extra";
 
 const SEL = new THREE.Color("#8b6cf0");
 
@@ -253,5 +254,7 @@ export function AssetMesh({
       return <Prop selected={selected} />;
     case "stage":
       return <Riser selected={selected} />;
+    default:
+      return <ExtraMesh type={type} selected={selected} hue={hue} />;
   }
 }

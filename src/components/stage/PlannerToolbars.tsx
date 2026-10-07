@@ -4,6 +4,7 @@ import {
 } from "lucide-react";
 import { useStage, type AssetType, type CameraView } from "@/lib/stage-store";
 import { useNotifications, timeAgo } from "@/lib/notifications";
+import { AssetLibraryButton } from "./AssetLibrary";
 
 export function TopBar() {
   const s = useStage();
@@ -92,6 +93,8 @@ export function AssetToolbar() {
           <I className="h-3.5 w-3.5" /> {label}
         </button>
       ))}
+      <div className="mx-1 h-4 w-px bg-border" />
+      <AssetLibraryButton />
       <div className="ml-auto flex items-center gap-0.5">
         <span className="panel-label mx-1">Transform</span>
         <button className="tool-btn" data-active={mode === "translate"} onClick={() => setMode("translate")} title="Move (W)">
