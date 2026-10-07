@@ -13,6 +13,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Sidebar } from "../components/shell/Sidebar";
+import { useLibrary } from "@/lib/asset-library";
 import { useStage } from "../lib/stage-store";
 
 function NotFoundComponent() {
@@ -122,6 +123,7 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   useEffect(() => {
     void useStage.getState().load();
+    void useLibrary.getState().fetch();
   }, []);
 
   return (

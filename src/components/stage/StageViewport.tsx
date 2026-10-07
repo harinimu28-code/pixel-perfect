@@ -11,6 +11,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import { useStage, type StageObject, type Vec3 } from "@/lib/stage-store";
 import { AssetMesh } from "./assets";
+import { CustomModel } from "./CustomModel";
 
 const D2R = Math.PI / 180;
 const registry = new Map<string, THREE.Group>();
@@ -63,7 +64,11 @@ function StageItem({ obj, beam, hue }: { obj: StageObject; beam: string; hue: nu
       }}
       onPointerOut={() => (document.body.style.cursor = "")}
     >
-      <AssetMesh type={obj.type} selected={selected} beam={beam} hue={hue} />
+      {obj.type === "custom" ? (
+        <CustomModel assetId={obj.assetId} selected={selected} />
+      ) : (
+        <AssetMesh type={obj.type} selected={selected} beam={beam} hue={hue} />
+      )}
       {selected && (
         <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.01, 0]}>
           <ringGeometry args={[0.55, 0.62, 48]} />
