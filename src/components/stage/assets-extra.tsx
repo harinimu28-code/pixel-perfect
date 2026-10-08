@@ -92,7 +92,7 @@ const LedBar = ({ selected: s }: P) => (
 const FloorLight = ({ selected: s }: P) => (
   <group>
     <Box p={[0, 0.08, 0]} a={[0.3, 0.16, 0.3]} c="#1a1a1d" s={s} />
-    <Cyl p={[0, 0.2, 0.05]} rot={[-0.9, 0, 0]} a={[0.1, 0.12, 0.15]} c="#111" e="#ffcf8a" />
+    <Cyl p={[0, 0.2, 0.05]} rot={[-0.9, 0, 0]} a={[0.1, 0.12, 0.15]} c="#ffcf8a" />
     <pointLight position={[0, 0.4, 0]} color="#ffcf8a" intensity={2} distance={3} />
   </group>
 );

@@ -10,3 +10,4 @@
 <!-- LOVABLE:END -->
 
 - Stage planner state lives in zustand stores under src/lib (stage-store, notifications); swap their actions for backend calls later to keep UI untouched.
+- Imported 3D models: files live in the private `stage-assets` storage bucket, metadata in `asset_library`; stage objects of type "custom" reference it via `asset_id` and load through cached signed URLs (src/lib/asset-library.ts, CustomModel.tsx). Why: one file shared by many instances, no binaries in the database.
