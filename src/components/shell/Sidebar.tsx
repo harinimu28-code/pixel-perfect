@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
-import { FolderKanban, Box, ClipboardList, GanttChart, CheckSquare, Bell } from "lucide-react";
+import { FolderKanban, Box, ClipboardList, GanttChart, CheckSquare, Bell, Users, LogOut } from "lucide-react";
 import { useNotifications } from "@/lib/notifications";
+import { canAccess, roleLabel, type AppRole } from "@/lib/access";
 
 const NAV = [
   { to: "/projects", label: "Projects", icon: FolderKanban },
@@ -9,9 +10,10 @@ const NAV = [
   { to: "/timeline", label: "Timeline", icon: GanttChart },
   { to: "/approvals", label: "Approvals", icon: CheckSquare },
   { to: "/notifications", label: "Notifications", icon: Bell },
+  { to: "/users", label: "Team", icon: Users },
 ] as const;
 
-export function Sidebar() {
+export function Sidebar({ role, email, onLogout }: { role: AppRole; email: string; onLogout: () => void }) {
   const unread = useNotifications((s) => s.items.filter((i) => !i.read).length);
   return (
     <aside className="flex w-[184px] shrink-0 flex-col border-r border-border bg-panel">
@@ -22,7 +24,7 @@ export function Sidebar() {
         <span className="text-[13px] font-semibold tracking-tight">StageSync</span>
       </div>
       <nav className="flex flex-col gap-px p-1.5">
-        {NAV.map(({ to, label, icon: Icon }) => (
+        {NAV.filter((n) => canAccess(role, n.to)).map(({ to, label, icon: Icon }) => (
           <Link
             key={to}
             to={to}
@@ -39,9 +41,11 @@ export function Sidebar() {
         ))}
       </nav>
       <div className="mt-auto border-t border-border p-3">
-        <div className="panel-label mb-1">Workspace</div>
-        <div className="text-xs">Northlight Productions</div>
-        <div className="font-mono text-[10px] text-muted-foreground">4 departments · 12 members</div>
+        <div className="panel-label mb-1">{roleLabel(role)}</div>
+        <div className="truncate text-xs" title={email}>{email}</div>
+        <button onClick={onLogout} className="mt-2 flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground">
+          <LogOut className="h-3.5 w-3.5" /> Log out
+        </button>
       </div>
     </aside>
   );

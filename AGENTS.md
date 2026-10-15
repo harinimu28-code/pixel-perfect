@@ -11,3 +11,4 @@
 
 - Stage planner state lives in zustand stores under src/lib (stage-store, notifications); swap their actions for backend calls later to keep UI untouched.
 - Imported 3D models: files live in the private `stage-assets` storage bucket, metadata in `asset_library`; stage objects of type "custom" reference it via `asset_id` and load through cached signed URLs (src/lib/asset-library.ts, CustomModel.tsx). Why: one file shared by many instances, no binaries in the database.
+- Auth: all app pages live under src/routes/_authenticated (client-only gate redirects to /login, loads the user's single role from user_roles and redirects disallowed paths); section access per role is defined once in src/lib/access.ts and reused by the sidebar and gate. Why: one source for UI and route guards, while RLS (has_role/has_any_role) is the real enforcement.
