@@ -3,7 +3,7 @@ import { useState } from "react";
 import { PageHeader } from "@/components/shell/Sidebar";
 import { useStage, type Department } from "@/lib/stage-store";
 
-export const Route = createFileRoute("/requirements")({
+export const Route = createFileRoute("/_authenticated/requirements")({
   head: () => ({
     meta: [
       { title: "Requirements — StageSync" },

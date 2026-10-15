@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { PageHeader } from "@/components/shell/Sidebar";
 import { Timeline } from "@/components/stage/Timeline";
 
-export const Route = createFileRoute("/timeline")({
+export const Route = createFileRoute("/_authenticated/timeline")({
   head: () => ({
     meta: [
       { title: "Production Timeline — StageSync" },
