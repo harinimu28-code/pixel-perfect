@@ -12,9 +12,7 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
-import { Sidebar } from "../components/shell/Sidebar";
-import { useLibrary } from "@/lib/asset-library";
-import { useStage } from "../lib/stage-store";
+import { supabase } from "@/integrations/supabase/client";
 
 function NotFoundComponent() {
   return (
@@ -121,16 +119,20 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const router = useRouter();
   useEffect(() => {
-    void useStage.getState().load();
-    void useLibrary.getState().fetch();
-  }, []);
+    const { data } = supabase.auth.onAuthStateChange((event) => {
+      if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;
+      void router.invalidate();
+      if (event === "SIGNED_OUT") queryClient.clear();
+    });
+    return () => data.subscription.unsubscribe();
+  }, [router, queryClient]);
 
   return (
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <div className="flex h-screen overflow-hidden">
-        <Sidebar />
         <Outlet />
       </div>
     </QueryClientProvider>

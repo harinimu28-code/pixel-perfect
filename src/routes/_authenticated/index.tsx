@@ -6,7 +6,7 @@ import { Timeline } from "@/components/stage/Timeline";
 import { TopBar, AssetToolbar } from "@/components/stage/PlannerToolbars";
 import { useStage } from "@/lib/stage-store";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/_authenticated/")({
   ssr: false,
   head: () => ({
     meta: [

@@ -4,7 +4,7 @@ import { STATUS_CLS } from "@/components/stage/Inspector";
 import { useStage, type Status } from "@/lib/stage-store";
 import { useNotifications } from "@/lib/notifications";
 
-export const Route = createFileRoute("/approvals")({
+export const Route = createFileRoute("/_authenticated/approvals")({
   head: () => ({
     meta: [
       { title: "Approvals — StageSync" },
