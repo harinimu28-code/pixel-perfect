@@ -1,0 +1,4 @@
+- [ ] Test signup, confirmation, pending users, and admin role assignment with disposable accounts.
+- [ ] Test direct database and storage requests as anonymous, pending, and every team role.
+- [ ] Fix reproduced failures and retain regression tests.
+- [ ] Remove test accounts/data and verify the existing admin and stage remain intact.
