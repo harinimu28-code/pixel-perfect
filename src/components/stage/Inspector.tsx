@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Pencil, MessageSquare, Trash2, Check } from "lucide-react";
 import { useStage, type Department, type Status, type Vec3 } from "@/lib/stage-store";
+import { canEditObject, canEditStage, type AppRole } from "@/lib/access";
 import { useNotifications, timeAgo } from "@/lib/notifications";
 
 const DEPTS: Department[] = ["Stage", "Lighting", "Sound", "LED Screen", "Props", "Design"];
@@ -72,8 +73,9 @@ export function StageSettings() {
   );
 }
 
-export function Inspector() {
+export function Inspector({ role }: { role: AppRole }) {
   const obj = useStage((s) => s.objects.find((o) => o.id === s.selectedId));
+  const canEditSelected = obj ? canEditObject(role, obj.department) : canEditStage(role);
   const update = useStage((s) => s.updateObject);
   const del = useStage((s) => s.deleteObject);
   const addComment = useStage((s) => s.addComment);
@@ -118,6 +120,11 @@ export function Inspector() {
       ) : (
         <>
           <Section title="Selected Object">
+            {!canEditSelected && (
+  <div className="px-3 py-2 text-[11px] text-muted-foreground">
+    View only — your role cannot edit this object.
+  </div>
+)}
             {editing ? (
               <div className="flex gap-1">
                 <input className="field font-sans" value={name} onChange={(e) => setName(e.target.value)} autoFocus />

@@ -3,6 +3,7 @@ import {
   Move3d, Rotate3d, Scaling, Grid3x3, Box, ArrowDownToLine, Eye, PanelTop,
 } from "lucide-react";
 import { useStage, type AssetType, type CameraView } from "@/lib/stage-store";
+import { canEditObject, type AppRole } from "@/lib/access";
 import { useNotifications, timeAgo } from "@/lib/notifications";
 import { AssetLibraryButton } from "./AssetLibrary";
 
@@ -75,12 +76,24 @@ const ASSETS: { type: AssetType; label: string; icon: typeof Box }[] = [
   { type: "prop", label: "Prop", icon: Flower2 },
 ];
 
-export function AssetToolbar() {
+export function AssetToolbar({ role }: { role: AppRole }) {
   const add = useStage((s) => s.addObject);
   const mode = useStage((s) => s.transformMode);
   const setMode = useStage((s) => s.setTransformMode);
   const select = useStage((s) => s.select);
   const selectedId = useStage((s) => s.selectedId);
+  const visibleAssets = ASSETS.filter(({ type }) => {
+  const department =
+    type === "led"
+      ? "LED Screen"
+      : type === "light"
+        ? "Lighting"
+        : type === "prop" || type === "chair"
+          ? "Props"
+          : "Stage";
+
+  return canEditObject(role, department);
+});
   return (
     <div className="flex h-9 shrink-0 items-center gap-0.5 border-b border-border bg-panel-2 px-2">
       <button className="tool-btn" data-active={!selectedId} onClick={() => select(null)} title="Select (Esc clears)">
@@ -88,7 +101,7 @@ export function AssetToolbar() {
       </button>
       <div className="mx-1 h-4 w-px bg-border" />
       <span className="panel-label mx-1">Add</span>
-      {ASSETS.map(({ type, label, icon: I }) => (
+      {visibleAssets.map(({ type, label, icon: I }) => (
         <button key={type} className="tool-btn" onClick={() => add(type)} title={`Add ${label}`}>
           <I className="h-3.5 w-3.5" /> {label}
         </button>

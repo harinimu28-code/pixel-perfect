@@ -5,6 +5,7 @@ import { Inspector } from "@/components/stage/Inspector";
 import { Timeline } from "@/components/stage/Timeline";
 import { TopBar, AssetToolbar } from "@/components/stage/PlannerToolbars";
 import { useStage } from "@/lib/stage-store";
+import { Route as AuthRoute } from "@/routes/_authenticated/route";
 
 export const Route = createFileRoute("/_authenticated/")({
   ssr: false,
@@ -20,6 +21,7 @@ export const Route = createFileRoute("/_authenticated/")({
 });
 
 function PlannerPage() {
+  const { role } = AuthRoute.useRouteContext();
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const t = e.target as HTMLElement;
@@ -48,7 +50,7 @@ function PlannerPage() {
   return (
     <div className="flex min-w-0 flex-1 flex-col">
       <TopBar />
-      <AssetToolbar />
+      <AssetToolbar role={role} />
       <div className="flex min-h-0 flex-1">
         <div className="relative min-w-0 flex-1 bg-viewport">
           <StageViewport />
@@ -57,7 +59,7 @@ function PlannerPage() {
             <div>W move · E rotate · R scale · Del delete</div>
           </div>
         </div>
-        <Inspector />
+        <Inspector role={role} />
       </div>
       <div className="h-[184px] shrink-0 border-t border-border">
         <Timeline />
