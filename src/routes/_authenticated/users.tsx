@@ -19,22 +19,41 @@ export const Route = createFileRoute("/_authenticated/users")({
 type Row = { id: string; name: string; email: string; role: AppRole | null };
 
 function UsersPage() {
-  const me = Route.useRouteContext().user.id;
+  const { user, role } = Route.useRouteContext();
+const me = user.id;
+const isAdmin = role === "admin";
   const [rows, setRows] = useState<Row[]>([]);
   const [err, setErr] = useState<string | null>(null);
 
   const load = async () => {
-    const [p, r] = await Promise.all([
-      supabase.from("profiles").select("id,name,email").order("created_at"),
-      supabase.from("user_roles").select("user_id,role"),
-    ]);
-    const roles = new Map((r.data ?? []).map((x) => [x.user_id, x.role]));
-    setRows((p.data ?? []).map((x) => ({ ...x, role: roles.get(x.id) ?? null })));
-  };
+  const [p, r] = await Promise.all([
+    supabase.from("profiles").select("id,name,email").order("created_at"),
+    supabase.from("user_roles").select("user_id,role"),
+  ]);
+
+  if (p.error || r.error) {
+    setErr(
+      p.error?.message ??
+      r.error?.message ??
+      "Unable to load team members."
+    );
+    return;
+  }
+
+  const roles = new Map((r.data ?? []).map((x) => [x.user_id, x.role]));
+
+  setRows(
+    (p.data ?? []).map((x) => ({
+      ...x,
+      role: roles.get(x.id) ?? null,
+    }))
+  );
+};
   useEffect(() => { void load(); }, []);
 
   const setRole = async (id: string, role: string) => {
-    setErr(null);
+  if (!isAdmin || id === me) return;
+  setErr(null);
     const { error } = role
       ? await supabase.from("user_roles").upsert({ user_id: id, role: role as AppRole }, { onConflict: "user_id" })
       : await supabase.from("user_roles").delete().eq("user_id", id);
@@ -55,11 +74,21 @@ function UsersPage() {
                 <td className="py-2">{u.name || "—"}</td>
                 <td className="font-mono text-muted-foreground">{u.email}</td>
                 <td>
-                  <select className="field" value={u.role ?? ""} disabled={u.id === me}
-                    onChange={(e) => void setRole(u.id, e.target.value)}>
-                    <option value="">No role (waiting)</option>
-                    {ROLES.map((r) => <option key={r} value={r}>{roleLabel(r)}</option>)}
-                  </select>
+                  {isAdmin ? (
+  <select
+    className="field"
+    value={u.role ?? ""}
+    disabled={u.id === me}
+    onChange={(e) => void setRole(u.id, e.target.value)}
+  >
+    <option value="">No role (waiting)</option>
+    {ROLES.map((r) => (
+      <option key={r} value={r}>{roleLabel(r)}</option>
+    ))}
+  </select>
+) : (
+  <span>{u.role ? roleLabel(u.role) : "Waiting for role"}</span>
+)}
                 </td>
               </tr>
             ))}

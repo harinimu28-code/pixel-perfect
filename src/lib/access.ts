@@ -13,10 +13,9 @@ export const ROLES: AppRole[] = [
   "animation",
 ];
 
-const TEAM = ["/", "/projects", "/requirements", "/timeline", "/notifications"];
-
+const TEAM = ["/", "/projects", "/requirements", "/timeline", "/notifications", "/users"];
 export const ROLE_SECTIONS: Record<AppRole, string[]> = {
-  admin: [...TEAM, "/approvals", "/users"],
+  admin: [...TEAM, "/approvals"],
   art_director: [...TEAM, "/approvals"],
   design: TEAM,
   props: TEAM,
